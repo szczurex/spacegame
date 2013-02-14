@@ -30,6 +30,38 @@ class Player:
             return False
         return True
 
+    def move(self, direction):
+        moves = ['N','E','S','W']
+        if direction in moves:
+            moved = False # better safe then sorry.
+            if direction == 'N':
+                if self.position[1]-1 <= LVL_SIZE_Y and self.position[1]-1 > 0:
+                    self.position = (self.position[0], self.position[1]-1)
+                    moved = True
+            elif direction == 'E':
+                if self.position[0]+1 <= LVL_SIZE_X and self.position[0]+1 > 0:
+                    self.position = (self.position[0]+1, self.position[1])
+                    moved = True
+            elif direction == 'S':
+                 if self.position[1]+1 <= LVL_SIZE_Y and self.position[1]+1 > 0:
+                    self.position = (self.position[0], self.position[1]+1)
+                    moved = True
+            elif direction == 'W':
+                if self.position[0]-1 <= LVL_SIZE_X and self.position[0]-1 > 0:
+                    self.position = (self.position[0]-1, self.position[1])
+                    moved = True
+            #we assume we moved.
+            if moved:
+                LEVEL_MAP[player.position].traverse(self)
+            else:
+                print("Could not move.")
+                raw_input('Press Enter to continue...')
+                
+            
+        else:
+            print("ILLEGAL MOVE")
+            raw_input('Press Enter to continue...')
+        
 
 class Entity:
     symbol = u"░"
@@ -57,7 +89,7 @@ class Entity:
         
         raw_input('Press any key to continue...')
 
-    def traverse(self):
+    def traverse(self, player):
         reduce_battery = self.traverse_battery_cost
         reduce_oxygen = self.traverse_oxygen_cost
 
@@ -71,8 +103,8 @@ class Entity:
         player.resources['batteries']   -= reduce_battery
         player.resources['oxygen_tank'] -= reduce_oxygen
         
-        #### TODO: MOVE THE PLAYER!
-
+        print("Lost %s batteries and %s oxygen during travel." % (reduce_battery, reduce_oxygen))
+        raw_input('Press Enter to continue...')
 
 class SpaceShip(Entity):
     symbol = u"◎"
@@ -84,11 +116,17 @@ class SpaceShip(Entity):
     traverse_battery_cost = 2
     traverse_oxygen_cost = 2
 
-def draw_level():
+def draw_level(player=None):
     for y in range(10):
         for x in range(10):
             symbol = LEVEL_MAP[(x+1,y+1)].symbol
-            sys.stdout.write(symbol)
+            if player:
+                if player.position == (x+1,y+1):
+                    sys.stdout.write(player.symbol)
+                else:
+                   sys.stdout.write(symbol) 
+            else:
+                sys.stdout.write(symbol)
         print('')
 
 
@@ -99,7 +137,7 @@ def init_game():
     player.resources = {'batteries': 10,
                         'scrap_metal': 9,
                         'oxygen_tank': 7}
-    player.position = (5,5)
+    player.position = (random.randint(1,10),random.randint(1,10))
 
     print('Spawning %s ships...' % (SHIP_SPAWN_COUNT))
     for i in range(SHIP_SPAWN_COUNT):
@@ -129,20 +167,27 @@ if __name__ == '__main__':
             3. Wait for input.
         '''
         #1
-        draw_level()
+        draw_level(player)
         #2
+        print('Player position: %s,%s (%s)' % (player.position[0],
+                                               player.position[1],
+                                               LEVEL_MAP[player.position].name))
         print('......Resources......')
         print('Batteries: %s' % (player.resources['batteries']))
         print('Scrap    : %s' % (player.resources['scrap_metal']))
         print('Oxygen   : %s' % (player.resources['oxygen_tank']))
         print('\n')
+        #3
         command = raw_input('SCAVENGE or TRAVERSE?')
             
         if command == 'SCAVENGE':
             LEVEL_MAP[player.position].scavenge(player)
         if command == 'TRAVERSE':
             newpos = raw_input('N/E/S/W ?')
-            print('Not yet implemented')
+            player.move(newpos)
         
-        
+    if player.resources['oxygen_tank'] < 1:
+        print("You ran out of oxygen to breathe.")
+    if player.resources['batteries'] < 1:
+        print("You ran out of batteries for life support.")
     print('GAME OVER.')
