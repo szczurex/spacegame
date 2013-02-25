@@ -13,9 +13,9 @@
 from math import floor
 import random, sys, os
 
-LVL_SIZE_X = 10
-LVL_SIZE_Y = 10
-SHIP_SPAWN_COUNT = 100
+LVL_SIZE_X = random.randint(10,30)
+LVL_SIZE_Y = random.randint(10,30)
+SHIP_SPAWN_COUNT = random.randint(20,50)
 LEVEL_MAP = {}
 
 class Player:
@@ -110,15 +110,25 @@ class SpaceShip(Entity):
     symbol = u"◎"
     name = 'Spaceship wreck'
     description = 'Spaceship wreckage (small) - salvagable for resources.'
-    batteries = 12
-    scrap_metal = 5
-    oxygen_tank = 7
-    traverse_battery_cost = 2
-    traverse_oxygen_cost = 2
-
+    batteries = 0
+    scrap_metal = 0
+    oxygen_tank = 0
+    traverse_battery_cost = 1
+    traverse_oxygen_cost = 1
+    
+    def __init__(self):
+        #randomize reseources each time
+        self.batteries = random.randint(0,10)
+        self.scrap_metal = random.randint(0,10)
+        self.oxygen_tank = random.randint(0,10)
+        #randomize traverse cost
+        self.traverse_battery_cost = random.randint(1,3)
+        self.traverse_oxygen_cost = random.randint(1,3)
+        
+        
 def draw_level(player=None):
-    for y in range(10):
-        for x in range(10):
+    for y in range(LVL_SIZE_Y):
+        for x in range(LVL_SIZE_X):
             symbol = LEVEL_MAP[(x+1,y+1)].symbol
             if player:
                 if player.position == (x+1,y+1):
@@ -134,18 +144,18 @@ def init_game():
     #init player
     print('Spawning player...')
     player = Player()
-    player.resources = {'batteries': 10,
-                        'scrap_metal': 9,
-                        'oxygen_tank': 7}
-    player.position = (random.randint(1,10),random.randint(1,10))
+    player.resources = {'batteries': random.randint(6,10),
+                        'scrap_metal': random.randint(6,12),
+                        'oxygen_tank': random.randint(6,10)}
+    player.position = (random.randint(1,LVL_SIZE_X),random.randint(1,LVL_SIZE_Y))
 
     print('Spawning %s ships...' % (SHIP_SPAWN_COUNT))
     for i in range(SHIP_SPAWN_COUNT):
-        LEVEL_MAP[(random.randint(1,10),random.randint(1,10))] = SpaceShip()
+        LEVEL_MAP[(random.randint(1,LVL_SIZE_X),random.randint(1,LVL_SIZE_Y))] = SpaceShip()
     
     print('Filling the level in...')
-    for y in range(10):
-        for x in range(10):
+    for y in range(LVL_SIZE_Y):
+        for x in range(LVL_SIZE_X):
             if not LEVEL_MAP.get((x+1,y+1)):
                 LEVEL_MAP[(x+1,y+1)] = Entity()
     
@@ -177,13 +187,14 @@ if __name__ == '__main__':
         print('Scrap    : %s' % (player.resources['scrap_metal']))
         print('Oxygen   : %s' % (player.resources['oxygen_tank']))
         print('\n')
+        print('Commands: SCAVENGE, TRAVERSE')
         #3
-        command = raw_input('SCAVENGE or TRAVERSE?')
+        command = raw_input('INPUT:>')
             
         if command == 'SCAVENGE':
             LEVEL_MAP[player.position].scavenge(player)
         if command == 'TRAVERSE':
-            newpos = raw_input('N/E/S/W ?')
+            newpos = raw_input('N/E/S/W:>')
             player.move(newpos)
         
     if player.resources['oxygen_tank'] < 1:
