@@ -3,8 +3,15 @@ spacegame
 
 Simple Game About Scavenge and survival
 
+IMPLEMENTED:
+- Randomized levels, ships, starting resources
+- Moving around and scavenging resources
+- Proper death
+- Fog of war
+- ASCII graphics (with simple colors)
+
 TODO:
-- Implement the Fog of War
+- Improve the Fog of War (raise the unfolding to 3x3 field instead of 1x1, game is too hard right now)
 - Marking of empty/scavenged vessels
 
 Future Ideas:

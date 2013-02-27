@@ -18,8 +18,20 @@ LVL_SIZE_Y = random.randint(10,30)
 SHIP_SPAWN_COUNT = random.randint(20,50)
 LEVEL_MAP = {}
 
+HEADER = '\033[95m' #purple
+OKBLUE = '\033[94m' #blue
+OKGREEN = '\033[92m' #green
+WARNING = '\033[93m' #yolo
+FAIL = '\033[91m' #red
+ENDC = '\033[0m'
+
+SYMBOL_UNDISCOVERED = FAIL + u"▓" + ENDC
+SYMBOL_EMPTY = WARNING + u"░" + ENDC
+SYMBOL_SHIP = OKBLUE + u"◎" + ENDC
+SYMBOL_PLAYER = OKGREEN + u"╬" + ENDC
+
 class Player:
-    symbol = u"◌"
+    symbol = SYMBOL_PLAYER
     resources = {'batteries': 0,
                  'scrap_metal': 0,
                  'oxygen_tank': 0}
@@ -27,6 +39,8 @@ class Player:
     
     def check_status(self):
         if self.resources['oxygen_tank'] < 1:
+            return False
+        if self.resources['batteries'] < 1:
             return False
         return True
 
@@ -64,7 +78,7 @@ class Player:
         
 
 class Entity:
-    symbol = u"░"
+    symbol = SYMBOL_EMPTY
     name = 'Empty space'
     description = 'Empty space, no resources.'
     batteries = 0
@@ -107,7 +121,7 @@ class Entity:
         raw_input('Press Enter to continue...')
 
 class SpaceShip(Entity):
-    symbol = u"◎"
+    symbol = SYMBOL_SHIP
     name = 'Spaceship wreck'
     description = 'Spaceship wreckage (small) - salvagable for resources.'
     batteries = 0
@@ -134,9 +148,15 @@ def draw_level(player=None):
                 if player.position == (x+1,y+1):
                     sys.stdout.write(player.symbol)
                 else:
-                   sys.stdout.write(symbol) 
+                    if LEVEL_MAP[(x+1,y+1)].discovered:
+                        sys.stdout.write(symbol)
+                    else:
+                        sys.stdout.write(SYMBOL_UNDISCOVERED)
             else:
-                sys.stdout.write(symbol)
+                if LEVEL_MAP[(x+1,y+1)].discovered:
+                        sys.stdout.write(symbol)
+                else:
+                    sys.stdout.write(SYMBOL_UNDISCOVERED)
         print('')
 
 
@@ -159,6 +179,8 @@ def init_game():
             if not LEVEL_MAP.get((x+1,y+1)):
                 LEVEL_MAP[(x+1,y+1)] = Entity()
     
+    print('Placing the player...')
+    LEVEL_MAP[player.position].discovered = True
     draw_level()
         
     return player
