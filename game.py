@@ -29,6 +29,7 @@ SYMBOL_UNDISCOVERED = FAIL + u"▓" + ENDC
 SYMBOL_EMPTY = WARNING + u"░" + ENDC
 SYMBOL_SHIP = OKBLUE + u"◎" + ENDC
 SYMBOL_PLAYER = OKGREEN + u"╬" + ENDC
+SYMBOL_POD = HEADER + u"⍙" + ENDC
 
 class Player:
     symbol = SYMBOL_PLAYER
@@ -139,6 +140,19 @@ class SpaceShip(Entity):
         self.traverse_battery_cost = random.randint(1,3)
         self.traverse_oxygen_cost = random.randint(1,3)
         
+class RescuePod(Entity):
+    symbol = SYMBOL_SHIP
+    name = 'Rescue pod'
+    description = 'Rescue pod - find parts to fix it.'
+    batteries = 0
+    scrap_metal = 0
+    oxygen_tank = 0
+    traverse_battery_cost = 0
+    traverse_oxygen_cost = 0  
+    
+    def __init__(self):
+        #TODO: create required part list.
+        pass
         
 def draw_level(player=None):
     for y in range(LVL_SIZE_Y):
