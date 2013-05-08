@@ -120,6 +120,13 @@ class Entity:
         
         print("Lost %s batteries and %s oxygen during travel." % (reduce_battery, reduce_oxygen))
         raw_input('Press Enter to continue...')
+        
+    def discover(self, player):
+        #placeholder #TODO.
+        self.discovered = True
+        # 3x3 discovery
+        
+
 
 class SpaceShip(Entity):
     symbol = SYMBOL_SHIP
@@ -185,8 +192,16 @@ def init_game():
 
     print('Spawning %s ships...' % (SHIP_SPAWN_COUNT))
     for i in range(SHIP_SPAWN_COUNT):
-        LEVEL_MAP[(random.randint(1,LVL_SIZE_X),random.randint(1,LVL_SIZE_Y))] = SpaceShip()
-    
+        #make sure to not overlap an existing ship
+        #also, current method not effective - replace later with a list of empty cells.
+        cell = None
+        while not cell:
+            rand_x = random.randint(1,LVL_SIZE_X)
+            rand_y = random.randint(1,LVL_SIZE_Y)
+            choice = LEVEL_MAP.get((rand_x,rand_y))# = SpaceShip()
+            if not choice:
+                LEVEL_MAP[(rand_x,rand_y)] = SpaceShip()
+                cell = LEVEL_MAP[(rand_x,rand_y)]
     print('Filling the level in...')
     for y in range(LVL_SIZE_Y):
         for x in range(LVL_SIZE_X):
@@ -195,6 +210,9 @@ def init_game():
     
     print('Placing the player...')
     LEVEL_MAP[player.position].discovered = True
+    
+    
+    
     draw_level()
         
     return player
