@@ -141,7 +141,7 @@ class SpaceShip(Entity):
         self.traverse_oxygen_cost = random.randint(1,3)
         
 class RescuePod(Entity):
-    symbol = SYMBOL_SHIP
+    symbol = SYMBOL_POD
     name = 'Rescue pod'
     description = 'Rescue pod - find parts to fix it.'
     batteries = 0

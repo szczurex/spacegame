@@ -38,7 +38,7 @@ INFIXES = [
 def NameGenerator():
     PREFIX_CHANCE = 40
     PREFIX_DOUBLE_CHANCE = 20
-    INFIX_DOUBLE_CHANCE = 75
+    INFIX_DOUBLE_CHANCE = 100
     
     name = ''
     
@@ -72,10 +72,11 @@ def NameGenerator():
 
 class RescuePodPart(GameItem):
     name = 'Item name'
-    description = 'Item description'
+    description = 'A part of the rescue pod required for fixing.'
     type = TYPE_RESCUE_POD_PART
     
-    
-if __name__ == '__main__':
-    for i in range(20):
-        print NameGenerator()
+    def __init__(self):
+        self.name = NameGenerator()
+        
+    def __unicode__(self):
+        return self.name
