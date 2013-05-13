@@ -258,7 +258,7 @@ def init_game():
     
     
     
-    draw_level()
+    draw_level(player)
         
     return player
 
