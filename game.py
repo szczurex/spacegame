@@ -114,7 +114,8 @@ class Entity:
             reduce_battery = 1 if (half_battery == 0) else half_battery
             reduce_oxygen = 1 if (half_oxygen == 0) else half_oxygen
 
-        self.discovered = True
+        self.discover(player)
+        #self.discovered = True
         player.resources['batteries']   -= reduce_battery
         player.resources['oxygen_tank'] -= reduce_oxygen
         
@@ -123,10 +124,54 @@ class Entity:
         
     def discover(self, player):
         #placeholder #TODO.
-        self.discovered = True
-        # 3x3 discovery
+        middle_x = player.position[0]
+        middle_y = player.position[1]
         
-
+        #there's probably a better way to do this...
+        #will do for now.
+        # TODO: iterate 9 times in the feature. (loop over a square)
+        # TODO: include a view range
+        
+        #TOP-LEFT
+        if LEVEL_MAP.get((middle_x-1,middle_y-1)):
+            LEVEL_MAP[(middle_x-1,middle_y-1)].discovered = True
+            
+        #MID-LEFT
+        if LEVEL_MAP.get((middle_x-1,middle_y)):
+            LEVEL_MAP[(middle_x-1,middle_y)].discovered = True
+        
+        #BOT-LEFT
+        if LEVEL_MAP.get((middle_x-1,middle_y+1)):
+            LEVEL_MAP[(middle_x-1,middle_y+1)].discovered = True
+          
+        ######################################################## 
+            
+        #TOP-MID
+        if LEVEL_MAP.get((middle_x,middle_y-1)):
+            LEVEL_MAP[(middle_x,middle_y-1)].discovered = True
+            
+        #MID-MID
+        self.discovered = True
+        
+        #BOT-MID
+        if LEVEL_MAP.get((middle_x,middle_y+1)):
+            LEVEL_MAP[(middle_x,middle_y+1)].discovered = True
+        
+        ######################################################## 
+        
+        #TOP-RIGHT
+        if LEVEL_MAP.get((middle_x+1,middle_y-1)):
+            LEVEL_MAP[(middle_x+1,middle_y-1)].discovered = True
+            
+        #MID-RIGHT
+        if LEVEL_MAP.get((middle_x+1,middle_y)):
+            LEVEL_MAP[(middle_x+1,middle_y)].discovered = True
+            
+        #BOT-RIGHT
+        if LEVEL_MAP.get((middle_x+1,middle_y+1)):
+            LEVEL_MAP[(middle_x+1,middle_y+1)].discovered = True
+        
+        
 
 class SpaceShip(Entity):
     symbol = SYMBOL_SHIP
@@ -209,7 +254,7 @@ def init_game():
                 LEVEL_MAP[(x+1,y+1)] = Entity()
     
     print('Placing the player...')
-    LEVEL_MAP[player.position].discovered = True
+    LEVEL_MAP[player.position].discover(player)
     
     
     
